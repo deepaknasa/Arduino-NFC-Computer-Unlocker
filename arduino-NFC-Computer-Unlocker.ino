@@ -5,7 +5,6 @@
 #define RESET 8
 
 Adafruit_NFCShield_I2C nfc(IRQ, RESET);
-//SETUP
 
 void setup() {
   //Set up Serial library at 9600 bps
@@ -29,7 +28,6 @@ void setup() {
   Keyboard.begin(); //initiate the Keyboard
 }
 
-//LOOP
 unsigned digit = 0;
 
 void loop() {
@@ -49,17 +47,19 @@ void loop() {
   
   if(success) {
     // Found a tag!
-    //Serial.print("Tag detected #");
+    Serial.print("Tag detected #");
     //turn the four byte UID of a mifare classic into a single variable #
     tagID = uid[3];
     tagID <<= 8; tagID |= uid[2];
     tagID <<= 8; tagID |= uid[1];
     tagID <<= 8; tagID |= uid[0];
+    Serial.println(tagID);
     
     tagEncKey = uid[3];
     tagEncKey <<= 8; tagEncKey |= uid[3];
     tagEncKey <<= 8; tagEncKey |= uid[2];
     tagEncKey <<= 8; tagEncKey |= uid[1];
+    Serial.println(tagEncKey);
 
     uint8_t key[] = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15};
     int i = 0;
@@ -72,7 +72,8 @@ void loop() {
     }
     
     //Work Computer
-    if(tagID == 843203076) {
+    //This tagID is generated from your NFC tag. See https://www.youtube.com/watch?v=iVhH0TtPTNU#t=89 for more info.
+    if(tagID == 123456789) {
       Keyboard.press(KEY_LEFT_CTRL);
       Keyboard.press(KEY_LEFT_ALT);
       Keyboard.press(KEY_DELETE);
@@ -86,7 +87,7 @@ void loop() {
       /*
       //If you need to change your password, use the following lines to encrypt the new password.
       //TIP: Make sure to comment out the ctrl-alt-delete code above before running
-      char password[] = "secretpass!"; //Delete this unencrypted password before using in production 
+      char password[] = "secretpass!"; //Delete this unencrypted password before using in your NFC computer unlocker in production
       printEncryptedPasswordByKey(password, passwordLength, key);
       */
       //Paste encrypted password encoded in decimal from serial monitor here.
@@ -104,7 +105,8 @@ void loop() {
     }
     
     //Password Manager
-    if(tagID == 844972804) {
+    ////This tagID is generated from your NFC tag. 
+    if(tagID == 987654321) {
       /** 
         * Make changes here
         */
@@ -133,7 +135,6 @@ void loop() {
   }
 }
 
-//function
 void printEncryptedPasswordByKey(char *password, size_t passwordLength, uint8_t *key) {
   int32_t n_bytes = passwordLength;
   //Long passwords must be split into 16 byte chunks for AES encryption lib
@@ -175,7 +176,6 @@ void printEncryptedPasswordByKey(char *password, size_t passwordLength, uint8_t 
   Serial.println("};");
 }
 
-//function
 char* decryptPasswordByKey(char chunks[][16], int32_t n_chunks, uint8_t *key) {
   static char decryptedPassword[32];
   size_t i, j, k;
@@ -195,7 +195,6 @@ char* decryptPasswordByKey(char chunks[][16], int32_t n_chunks, uint8_t *key) {
   return decryptedPassword;
 }
 
-//function
 void KeyboardWritePass(char s[], int32_t passwordLength) {
   size_t i;
   
